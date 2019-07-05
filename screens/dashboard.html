@@ -1,0 +1,145 @@
+<div class="dashboard">
+<div class="text txt-normal">Your saved expenses for the month are listed below. The ones which are marked as green dots are the ones which you have already paid.</div>
+<div class="feed-items">
+	
+</div>
+<form method="post" id="expform">
+<div class="foot-bar">
+	<input type="text" class="tbox large txt-large" name="item" placeholder="Expense" />
+	<input type="text" class="tbox small txt-center txt-large" name="cost" placeholder="0.00" />
+	<input type="button" name="submit" class="button small ascent txt-large" value="+" onclick="save_expense(this.form)">
+</div>
+</form>
+<style>
+	.dashboard .foot-bar{
+		height: 56px;
+		width:100vw;
+		position: fixed;
+		left:0;
+		bottom: 0;
+		z-index:1000;
+		box-shadow: 0 -1px 6px rgba(0,0,0,0.5);
+		padding: 8px;
+		background: #323232;
+	}
+	.dashboard .foot-bar input.tbox{
+		border:none;
+		padding: 4px;
+		height:100%;
+		border-radius:4px;
+		outline: none;
+	}
+	.dashboard .foot-bar input.button{
+		border:none;
+		padding: 4px;
+		height:100%;
+		border-radius:4px;
+		outline: none;
+	}
+	.txt-center{
+		text-align: center;
+	}
+	.dashboard .foot-bar input.small{
+		width:20%;
+	}
+	.dashboard .foot-bar input.large{
+		width:56%;
+	}
+
+	.dashboard #expform.error .foot-bar input.tbox{
+		border-bottom: 2px solid red;
+    	border-radius: 0;
+    	outline: none;
+	}
+	.feed-items .item{
+		background: #fff;
+		padding: 10px 8px;
+		border-bottom: 1px solid #efefef;
+		display: table;
+		width: 100%;
+		height:36px;
+		line-height: 36px;
+	}
+	.feed-items .item .name{
+		display: block;
+		width:50%;
+		float: left;
+	}
+	.feed-items .item .cost {
+	    display: block;
+	    width: calc(50% - 40px);
+	    float: left;
+	    color: #1976D2;
+	    text-align: right;
+	}
+	.feed-items .item input[type=checkbox]{
+		width: 24px;
+	    height: 24px;
+	    vertical-align: middle;
+	    -webkit-appearance: none;
+	    background: #cfcfcf;
+	    border-radius: 50%;
+	    border:2px solid #dcdcdc;
+	    outline: none;
+	    float: right;
+	    margin: 6px;
+	}
+	.feed-items .item input[type=checkbox]:checked{
+		background: #00e500;
+    	border: 1px solid #32e832;
+	}
+	.feed-items .item input[type=checkbox]:checked ~ span{
+		text-decoration: line-through;
+		opacity: 0.6;
+	}
+	
+</style>
+<script>
+	function logout(){
+		localStorage['chelavu_web_app'] = '[]';
+		instance.loadScreen(screens.login_screen);
+	}
+	function save_expense(form){
+		var data = prepare_payload(form);
+		if(data.item && data.cost){
+			DatabaseHelper.save_expense(data);
+			load_expenses();
+			form.reset();
+		}
+		else{
+			$('#expform').addClass('error');
+		}
+	}
+	function prepare_payload(form){
+		var data = {};
+		$('#expform').removeClass('error');
+		if(form.item.value.length > 3){
+			data['item'] = form.item.value;
+		}
+		if(parseInt(form.cost.value) > 0){
+			data['cost'] = parseInt(form.cost.value);
+		}
+		data['paid'] = false;
+		return data;
+	}
+	function load_expenses(){
+		var expenses = DatabaseHelper.app_storage();
+		var panel = '.feed-items';
+		$(panel).html('');
+		for(var i in expenses){
+			var expense = expenses[i];
+			$('<div class="item txt-normal"><input type="checkbox" data-index="'+i+'" '+
+				(expense.paid ? 'checked' : '')+' /><span class="name">'+expense.item+
+				'</span><span class="cost">'+expense.cost.toFixed(2)+'</span></div>').appendTo(panel);
+		}
+
+		$('.feed-items .item input[type=checkbox]').change(function(){
+			var id = $(this).data('index');
+			var paid = $(this).prop('checked');
+			DatabaseHelper.mark_item_status(id,paid);
+		});
+	}
+	//init
+	load_expenses();
+</script>
+</div>

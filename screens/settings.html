@@ -1,0 +1,146 @@
+<div class="dashboard">
+<div class="text txt-normal">Your saved income sources are listed below. The ones which are marked by green dots are your active income sources.</div>
+<div class="feed-items">
+	
+</div>
+<form method="post" id="expform">
+<div class="foot-bar">
+	<input type="text" class="tbox large txt-large" name="item" placeholder="Income" />
+	<input type="text" class="tbox small txt-center txt-large" name="amount" placeholder="0.00" />
+	<input type="button" name="submit" class="button small ascent txt-large" value="+" onclick="save_income(this.form)">
+</div>
+</form>
+<style>
+	.dashboard .foot-bar{
+		height: 56px;
+		width:100vw;
+		position: fixed;
+		left:0;
+		bottom: 0;
+		z-index:1000;
+		box-shadow: 0 -1px 6px rgba(0,0,0,0.5);
+		padding: 8px;
+		background: #323232;
+	}
+	.dashboard .foot-bar input.tbox{
+		border:none;
+		padding: 4px;
+		height:100%;
+		border-radius:4px;
+		outline: none;
+	}
+	.dashboard .foot-bar input.button{
+		border:none;
+		padding: 4px;
+		height:100%;
+		border-radius:4px;
+		outline: none;
+	}
+	.txt-center{
+		text-align: center;
+	}
+	.dashboard .foot-bar input.small{
+		width:20%;
+	}
+	.dashboard .foot-bar input.large{
+		width:56%;
+	}
+
+	.dashboard #expform.error .foot-bar input.tbox{
+		border-bottom: 2px solid red;
+    	border-radius: 0;
+    	outline: none;
+	}
+	.feed-items .item{
+		background: #fff;
+		padding: 10px 8px;
+		border-bottom: 1px solid #efefef;
+		display: table;
+		width: 100%;
+		height:36px;
+		line-height: 36px;
+	}
+	.feed-items .item .name{
+		display: block;
+		width:50%;
+		float: left;
+	}
+	.feed-items .item .cost {
+	    display: block;
+	    width: calc(50% - 40px);
+	    float: left;
+	    color: #1976D2;
+	    text-align: right;
+	}
+	.feed-items .item input[type=checkbox]{
+		width: 24px;
+	    height: 24px;
+	    vertical-align: middle;
+	    -webkit-appearance: none;
+	    background: #cfcfcf;
+	    border-radius: 50%;
+	    border:2px solid #dcdcdc;
+	    outline: none;
+	    float: right;
+	    margin: 6px;
+	}
+	.feed-items .item input[type=checkbox]:checked{
+		background: #00e500;
+    	border: 1px solid #32e832;
+	}
+	.feed-items .item input[type=checkbox]:checked ~ span{
+		text-decoration: none;
+		opacity: 1;
+	}
+	.feed-items .item input[type=checkbox] ~ span{
+		text-decoration: line-through;
+		opacity: 0.6;
+	}
+	
+</style>
+<script>
+	
+	function save_income(form){
+		var data = prepare_payload(form);
+		if(data.item && data.amount){
+			DatabaseHelper.save_income(data);
+			load_income();
+			form.reset();
+		}
+		else{
+			$('#expform').addClass('error');
+		}
+	}
+	function prepare_payload(form){
+		var data = {};
+		$('#expform').removeClass('error');
+		if(form.item.value.length > 3){
+			data['item'] = form.item.value;
+		}
+		if(parseInt(form.amount.value) > 0){
+			data['amount'] = parseInt(form.amount.value);
+		}
+		data['active'] = true;
+		return data;
+	}
+	function load_income(){
+		var income = DatabaseHelper.income_storage();
+		var panel = '.feed-items';
+		$(panel).html('');
+		for(var i in income){
+			var source = income[i];
+			$('<div class="item txt-normal"><input type="checkbox" data-index="'+i+'" '+
+				(source.active ? 'checked' : '')+' /><span class="name">'+source.item+
+				'</span><span class="cost">'+source.amount.toFixed(2)+'</span></div>').appendTo(panel);
+		}
+
+		$('.feed-items .item input[type=checkbox]').change(function(){
+			var id = $(this).data('index');
+			var active = $(this).prop('checked');
+			DatabaseHelper.mark_income_status(id,active);
+		});
+	}
+	//init
+	load_income();
+</script>
+</div>

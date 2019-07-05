@@ -1,0 +1,9 @@
+<script>
+	var user = User.currentuser();
+	if(user){
+		instance.loadScreen(User.homescreen);
+	}
+	else{
+		instance.loadScreen(screens.loginform);
+	}
+</script>
