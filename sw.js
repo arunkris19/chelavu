@@ -1,7 +1,7 @@
 'use strict';
 
 const PREFIX = 'chelavu.pwa';
-const HASH = 'ver.006f'; // Computed at build time.
+const HASH = 'ver.007f'; // Computed at build time.
 const OFFLINE_CACHE = `${PREFIX}-${HASH}`;
 
 self.addEventListener('install', function(event) {
@@ -12,10 +12,10 @@ self.addEventListener('install', function(event) {
         '/js/app.js',
         '/images/ham.png',
         '/js/jquery.min.js',
-        '/screens/home.html',
+        /*'/screens/home.html',
         '/screens/dashboard.html',
         '/screens/loginform.html',
-        '/screens/settings.html'
+        '/screens/settings.html'*/
       ]); // Computed at build time.
     })
   );
