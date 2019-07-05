@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chelavu - web app</title>
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+<link rel="manifest" href="/manifest.json">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Chelavu">
+<link rel="apple-touch-icon" href="/images/icons/icon-152.png">
+<script src="/js/jquery.min.js" async></script>
+<meta name="theme-color" content="#249900" />
+<script>
+	if ('serviceWorker' in navigator) {
+	  window.addEventListener('load', () => {
+	    navigator.serviceWorker.register('/sw.js')
+	        .then((reg) => {
+	          console.log('CP - Service worker registered');
+	        });
+	  });
+	}
+</script>
+<style>
+	body{
+		--dark: #009645;
+	    --light: #00cc5f;
+	    --ascent: #f44336;
+		font-size:16pt;
+		font-family: 'roboto',sans-serif;
+		background-color: #f1f1f1;
+		color:#626262;
+		font-size: 16pt;
+	}
+	.dark{
+		background-color: #009645;
+		background-color: var(--dark);
+		color: #fff;
+	}
+	.light{
+		background-color: #00cc5f;
+		background-color: var(--light);
+		color: #fff;
+	}
+	.ascent{
+		background-color: #f44336;
+		background-color: var(--ascent);
+		color: #fff;
+	}
+	html,body{
+		height: 100%;
+		width: 100%;
+	}
+	*{
+		box-sizing: border-box;
+		margin:0;
+		padding:0;
+		font-weight:400;
+	}
+	.app-bar{
+		color: #fff;
+		padding:8px;
+		height: 56px;
+		box-shadow: 0 0 4px 2px rgba(0,0,0,0.3);
+	}
+	.app-bar small{
+		font-size: 0.9rem;
+		margin-left: 8px;
+	}
+	.display{
+		position: relative;
+	}
+	.v-middle{
+		position: absolute;
+		top:50%;
+		transform: translateY(-50%);
+	}
+	.h-center{
+		position: absolute;
+		left:50%;
+		transform: translateX(-50%);
+	}
+	.middle{
+		position: absolute;
+		left:50%;
+		top:50%;
+		transform: translate(-50%,-50%);
+	}
+	.menu{
+		display: inline-block;
+	    height: 18px;
+	    width: 20px;
+	    margin-right:8px;
+		vertical-align: middle;
+		background:url(/images/ham.png) repeat-x center;
+		background-size:16px;
+	}
+	.content-panel{
+		background-color: #fff;
+		border:8px solid #f1f1f1;
+		height: calc(100% - 56px);
+		overflow-y: auto;
+		padding: 8px;
+	}
+	button{
+		color: #fff;
+		padding: 8px 12px;
+		font-size:0.9rem;
+		border:none;
+		box-shadow: 0 0 2px 0px rgba(0,0,0,0.3);
+		border-radius: 4px;
+	}
+	h1{
+		font-size: 2.0rem;
+	}
+	button.fab{
+		width: 56px;
+		height:56px;
+		color:#fff;
+		font-size:1.6rem;
+		line-height: 40px;
+		border-radius: 50%;
+		position:fixed;
+		right:16px;
+		bottom: 16px;
+		z-index:3000;
+		box-shadow: 0 0 4px 0px rgba(0,0,0,0.3);
+	}
+	.text{
+		padding: 8px 0;
+	}
+	.txt-small{ font-size: 0.8rem;	}
+	.txt-normal{ font-size: 0.9rem;	}
+	.txt-large{ font-size: 1.2rem;	}
+	.txt-xlarge{ font-size: 2.0rem;	}
+	
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+</head>
+<body>
+<!-- app body -->
+<div class="app-bar dark shadow fixed display">
+<span class="menu v-middle"></span>
+<div class="middle">
+<span class="x-large" id="app-bar-title"></span>
+</div>
+</div>
+<div class="content-panel" id="app-container"></div>
+<!-- script area -->
+<script>
+	document.body.onload = function(){
+		$.getScript( "/js/app.js" ).done(function( script, textStatus ) {
+		    console.log( textStatus );
+		}).fail(function( jqxhr, settings, exception ) {
+		    $("div.log" ).text( "Triggered ajaxError handler." );
+		});
+	}
+</script>
+<div class="log"></div>
+</body>
+</html>
