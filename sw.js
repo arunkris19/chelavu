@@ -9,13 +9,14 @@ self.addEventListener('install', function(event) {
     caches.open(OFFLINE_CACHE).then(function(cache) {
       return cache.addAll([
         '/',
+        '/favicon.ico',
         '/js/app.js',
         '/images/ham.png',
         '/js/jquery.min.js',
-        /*'/screens/home.html',
+        '/screens/home.html',
         '/screens/dashboard.html',
         '/screens/loginform.html',
-        '/screens/settings.html'*/
+        '/screens/settings.html'
       ]); // Computed at build time.
     })
   );
